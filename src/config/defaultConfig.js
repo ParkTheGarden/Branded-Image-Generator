@@ -1,0 +1,58 @@
+export const DEFAULT_CONFIG = {
+  logos: {
+    logoOnly: {
+      light: '/assets/logo/AIVEX-black.svg',
+      dark: '/assets/logo/AIVEX-white.svg',
+    },
+    logoHorizontal: {
+      light: '/assets/logo/AIVEX-slogan-black.svg',
+      dark: '/assets/logo/AIVEX-slogan-white.svg',
+    },
+    logoVertical: {
+      light: '/assets/logo/AIVEX-slogan-black-vertical.svg',
+      dark: '/assets/logo/AIVEX-slogan-white-vertical.svg',
+    },
+  },
+  colors: {
+    brand: '#FF5900',
+    white: '#FFFFFF',
+    darkgray: '#323339',
+    black: '#000000',
+  },
+  ratios: [
+    { id: '1:1', label: '1:1', width: 1200, height: 1200 },
+    { id: '16:9', label: '16:9', width: 1920, height: 1080 },
+    { id: '3:2', label: '3:2', width: 1800, height: 1200 },
+    { id: '4:3', label: '4:3', width: 1600, height: 1200 },
+    { id: '2:1', label: '2:1', width: 1800, height: 900 },
+    { id: '3:1', label: '3:1', width: 1800, height: 600 },
+  ],
+  backgrounds: [
+    { id: 'transparent', label: '없음', sub: '(투명)', type: 'transparent' },
+    { id: 'brand', label: '브랜드', sub: '오렌지', type: 'color', colorKey: 'brand' },
+    { id: 'white', label: '흰색', type: 'color', colorKey: 'white' },
+    { id: 'darkgray', label: '어두운', sub: '회색', type: 'color', colorKey: 'darkgray' },
+    { id: 'black', label: '검정', sub: '블랙', type: 'color', colorKey: 'black' },
+    { id: 'abstract01', label: '추상 1', type: 'image', src: '/assets/overlays/BG-abstract01.png' },
+    { id: 'abstract02', label: '추상 2', type: 'image', src: '/assets/overlays/BG-abstract02.png' },
+  ],
+  logoTypes: [
+    { id: 'logoOnly', label: '로고만' },
+    { id: 'logoHorizontal', label: '로고 + 슬로건 가로형', hint: '가로로 슬로건이 배치됩니다' },
+    { id: 'logoVertical', label: '로고 + 슬로건 세로형', hint: '슬로건이 로고 아래 배치됩니다' },
+  ],
+  overlays: [
+    { id: 'none', label: '없음' },
+    { id: 'line', label: '라인', src: '/assets/overlays/BG-line.png' },
+    { id: 'building', label: '사옥', src: '/assets/overlays/BG-building.png' },
+    { id: 'lobby', label: '3층 로비', src: '/assets/overlays/BG-lobby.png' },
+    { id: 'factory01', label: '현장 1', src: '/assets/overlays/BG-factory01.png' },
+    { id: 'factory02', label: '현장 2', src: '/assets/overlays/BG-factory02.png' },
+    { id: 'factory03', label: '현장 3', src: '/assets/overlays/BG-factory03.png' },
+    { id: 'labeling01', label: '레이블링 1', src: '/assets/overlays/BG-labeling01.png' },
+    { id: 'labeling02', label: '레이블링 2', src: '/assets/overlays/BG-labeling02.png' },
+    { id: 'people01', label: 'AIVers 1', src: '/assets/overlays/BG-people01.png' },
+    { id: 'people02', label: 'AIVers 2', src: '/assets/overlays/BG-people02.png' },
+    { id: 'minsoo', label: '민수님', src: '/assets/overlays/BG-minsoo.png' },
+  ],
+}

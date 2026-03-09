@@ -1,0 +1,39 @@
+import { useState, useCallback } from 'react'
+import { ConfigProvider } from './context/ConfigContext'
+import OptionPanel from './components/OptionPanel'
+import PreviewCanvas from './components/PreviewCanvas'
+
+const INITIAL_STATE = {
+  ratio: '16:9',
+  background: 'brand',
+  overlayCategory: 'none',
+  logoType: 'logoOnly',
+  overlayGrayscale: false,
+  logoImage: null,
+  customOverlayImage: null,
+}
+
+export default function App() {
+  const [state, setState] = useState(INITIAL_STATE)
+
+  const updateState = useCallback((updates) => {
+    setState((prev) => ({ ...prev, ...updates }))
+  }, [])
+
+  const reset = useCallback(() => {
+    setState({
+      ...INITIAL_STATE,
+      logoImage: null,
+      customOverlayImage: null,
+    })
+  }, [])
+
+  return (
+    <ConfigProvider>
+      <div className="app">
+        <OptionPanel state={state} onUpdate={updateState} onReset={reset} />
+        <PreviewCanvas state={state} />
+      </div>
+    </ConfigProvider>
+  )
+}
