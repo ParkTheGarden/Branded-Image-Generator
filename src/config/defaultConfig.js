@@ -37,7 +37,7 @@ export const DEFAULT_CONFIG = {
     { id: 'white', label: '흰색', type: 'color', colorKey: 'white' },
     { id: 'darkgray', label: '어두운', sub: '회색', type: 'color', colorKey: 'darkgray' },
     { id: 'black', label: '검정', sub: '블랙', type: 'color', colorKey: 'black' },
-    { id: 'lightgray', label: '밝은(회색)', type: 'color', colorKey: 'lightgray' },
+    { id: 'lightgray', label: '밝은', sub: '회색', type: 'color', colorKey: 'lightgray' },
     { id: 'abstract01', label: '추상 1', type: 'image', src: '/assets/overlays/BG-abstract01.png' },
     { id: 'abstract02', label: '추상 2', type: 'image', src: '/assets/overlays/BG-abstract02.png' },
   ],
