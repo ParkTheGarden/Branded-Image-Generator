@@ -8,15 +8,6 @@ export function drawCheckerboard(ctx, x, y, w, h, size = 12) {
   }
 }
 
-function hexToRgba(hex, opacity) {
-  const m = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i)
-  if (!m) return `rgba(0,0,0,${opacity})`
-  const r = parseInt(m[1], 16)
-  const g = parseInt(m[2], 16)
-  const b = parseInt(m[3], 16)
-  return `rgba(${r},${g},${b},${opacity})`
-}
-
 export function getLogoColor(background, config) {
   const colors = config?.colors || {}
   const lightText = '#333333'
@@ -85,9 +76,9 @@ function getDefaultLogoSrc(logoType, background, config, logoColor) {
 
 export function drawLogoLayer(ctx, w, h, state, config, defaultLogoImages = {}) {
   const logoColor = getLogoColor(state.background, config)
-  const { logoImage, logoType, logoColor: logoColorId } = state
+  const { logoType, logoColor: logoColorId } = state
   const logoSrc = getDefaultLogoSrc(logoType, state.background, config, logoColorId)
-  const logoToDraw = logoImage || defaultLogoImages[logoSrc]
+  const logoToDraw = defaultLogoImages[logoSrc]
 
   if (logoToDraw && logoToDraw.complete && logoToDraw.naturalWidth) {
     let sizeFactor = 1

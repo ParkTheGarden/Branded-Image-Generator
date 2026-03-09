@@ -1,40 +1,14 @@
-import { useRef } from 'react'
 import { useConfig } from '../context/ConfigContext'
 
 export default function OptionPanel({ state, onUpdate, onReset }) {
   const config = useConfig()
   const overlays = config.overlays || []
-  const ratios = config.ratios || []
   const backgrounds = config.backgrounds || []
   const logoTypes = config.logoTypes || []
   const logoColors = config.logoColors || []
   const isAbstractBackground = backgrounds.some(
     (b) => b.id === state.background && b.type === 'image'
   )
-
-  const handleLogoUpload = (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const url = URL.createObjectURL(file)
-    const img = new Image()
-    img.onload = () => {
-      onUpdate({ logoImage: img })
-    }
-    img.onerror = () => onUpdate({ logoImage: null })
-    img.src = url
-  }
-
-  const handleOverlayUpload = (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const url = URL.createObjectURL(file)
-    const img = new Image()
-    img.onload = () => {
-      onUpdate({ overlayCategory: 'custom', customOverlayImage: img })
-    }
-    img.onerror = () => {}
-    img.src = url
-  }
 
   return (
     <aside className="sidebar">

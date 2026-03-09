@@ -10,8 +10,6 @@ const INITIAL_STATE = {
   logoType: 'logoOnly',
   logoColor: 'white',
   overlayGrayscale: false,
-  logoImage: null,
-  customOverlayImage: null,
 }
 
 export default function App() {
@@ -24,8 +22,6 @@ export default function App() {
   const reset = useCallback(() => {
     setState({
       ...INITIAL_STATE,
-      logoImage: null,
-      customOverlayImage: null,
     })
   }, [])
 
