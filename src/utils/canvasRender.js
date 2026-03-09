@@ -68,22 +68,39 @@ function getDimensionsFromConfig(config, ratioId) {
   return { w: found.width, h: found.height }
 }
 
-function getDefaultLogoSrc(logoType, background, config) {
+function getDefaultLogoSrc(logoType, background, config, logoColor) {
   const logos = config?.logos || {}
-  const typeConfig = logos[logoType] || logos.logoOnly
-  const isLight = background === 'white' || background === 'transparent'
-  const variant = isLight ? 'light' : 'dark'
-  return typeConfig?.[variant] || typeConfig?.light || typeConfig?.dark
+  const typeConfig = logos[logoType] || logos.logoOnly || {}
+  const desired = logoColor || 'white'
+  if (typeConfig[desired]) return typeConfig[desired]
+
+  const isLightBg =
+    background === 'white' || background === 'lightgray' || background === 'transparent'
+  if (isLightBg && typeConfig.black) return typeConfig.black
+  if (!isLightBg && typeConfig.white) return typeConfig.white
+
+  const any = Object.values(typeConfig)[0]
+  return any
 }
 
 export function drawLogoLayer(ctx, w, h, state, config, defaultLogoImages = {}) {
   const logoColor = getLogoColor(state.background, config)
-  const { logoImage, logoType } = state
-  const logoToDraw = logoImage || defaultLogoImages[getDefaultLogoSrc(logoType, state.background, config)]
+  const { logoImage, logoType, logoColor: logoColorId } = state
+  const logoSrc = getDefaultLogoSrc(logoType, state.background, config, logoColorId)
+  const logoToDraw = logoImage || defaultLogoImages[logoSrc]
 
   if (logoToDraw && logoToDraw.complete && logoToDraw.naturalWidth) {
-    const isCombo = logoType === 'logoHorizontal' || logoType === 'logoVertical'
-    const sizeFactor = isCombo ? 1.5 : 1
+    let sizeFactor = 1
+    if (logoType === 'logoOnly') {
+      // 로고만일 때 기본보다 약간 크게
+      sizeFactor = 1.25
+    } else if (logoType === 'logoHorizontal') {
+      // 로고+슬로건 가로형: 기존(1.5배)보다 1.2배 더 크게 → 1.8배
+      sizeFactor = 1.8
+    } else if (logoType === 'logoVertical') {
+      // 세로형은 기존 1.5배 유지
+      sizeFactor = 1.5
+    }
     const maxLogoW = w * 0.4 * sizeFactor
     const maxLogoH = h * 0.25 * sizeFactor
     let lw = logoToDraw.width
@@ -110,6 +127,7 @@ function getBgColor(background, config) {
     white: colors.white || '#FFFFFF',
     darkgray: colors.darkgray || '#323339',
     black: colors.black || '#000000',
+    lightgray: colors.lightgray || '#FAFAFC',
   }
   return map[background]
 }
@@ -118,16 +136,17 @@ function drawImageCoverByWidth(ctx, img, canvasW, canvasH) {
   const iw = img.naturalWidth || img.width
   const ih = img.naturalHeight || img.height
   if (!iw || !ih) return
-  const scale = canvasW / iw
-  const dw = canvasW
+  // object-fit: cover와 동일한 동작
+  const scale = Math.max(canvasW / iw, canvasH / ih)
+  const dw = iw * scale
   const dh = ih * scale
-  const dx = 0
+  const dx = (canvasW - dw) / 2
   const dy = (canvasH - dh) / 2
   ctx.drawImage(img, dx, dy, dw, dh)
 }
 
 export function renderToCanvas(bufferCanvas, state, overlayImages, options = {}) {
-  const { forDownload = false, config = {}, defaultLogoImages = {} } = options
+  const { forDownload = false, config = {}, defaultLogoImages = {}, backgroundImages = {} } = options
   const { w, h } = getDimensionsFromConfig(config, state.ratio)
   const ctx = bufferCanvas.getContext('2d')
   bufferCanvas.width = w
@@ -140,27 +159,23 @@ export function renderToCanvas(bufferCanvas, state, overlayImages, options = {})
       drawCheckerboard(ctx, 0, 0, w, h)
     }
   } else if (state.background === 'abstract01' || state.background === 'abstract02') {
-    const path =
-      state.background === 'abstract01'
-        ? '/assets/overlays/BG-abstract01.png'
-        : '/assets/overlays/BG-abstract02.png'
-    const img = new Image()
-    img.onload = () => {
+    const img = backgroundImages[state.background]
+    if (img && img.complete && img.naturalWidth) {
       drawImageCoverByWidth(ctx, img, w, h)
-      drawLogoLayer(ctx, w, h, state, config, defaultLogoImages)
+    } else {
+      ctx.fillStyle = '#000000'
+      ctx.fillRect(0, 0, w, h)
     }
-    img.src = path
-    ctx.fillStyle = '#000000'
-    ctx.fillRect(0, 0, w, h)
-    return
   } else {
     ctx.fillStyle = getBgColor(state.background, config)
     ctx.fillRect(0, 0, w, h)
   }
 
-  const overlayImg = state.overlayCategory !== 'none' && state.overlayCategory !== 'custom'
-    ? overlayImages[state.overlayCategory]
-    : state.customOverlayImage || null
+  const isAbstractBackground = state.background === 'abstract01' || state.background === 'abstract02'
+  const overlayImg =
+    !isAbstractBackground && state.overlayCategory !== 'none' && state.overlayCategory !== 'custom'
+      ? overlayImages[state.overlayCategory]
+      : null
 
   if (overlayImg && overlayImg.complete && overlayImg.naturalWidth) {
     ctx.save()

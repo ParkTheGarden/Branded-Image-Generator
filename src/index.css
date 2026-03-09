@@ -168,6 +168,10 @@ body {
   background: #1a1a1a;
 }
 
+.bg-swatch.lightgray {
+  background: #fafafc;
+}
+
 .bg-swatch.abstract01 {
   background: url('/assets/overlays/BG-abstract01.png') center/cover no-repeat;
 }
@@ -202,6 +206,15 @@ body {
 
 .overlay-desat .overlay-img {
   filter: saturate(0);
+}
+
+.overlay-disabled .overlay-thumb {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.overlay-disabled .overlay-thumb:not(.overlay-none) {
+  pointer-events: none;
 }
 
 .overlay-thumb {
@@ -415,6 +428,35 @@ body {
   margin-top: 4px;
 }
 
+.logo-color-options {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.logo-color-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, opacity 0.2s;
+}
+
+.logo-color-chip.active {
+  border-color: var(--brand-orange);
+  background: #fff4ec;
+  color: var(--brand-orange);
+}
+
+.logo-color-chip.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .slogan-input {
   width: 100%;
   padding: 10px 12px;
@@ -469,7 +511,7 @@ body {
 .preview-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .preview-title {
@@ -477,14 +519,59 @@ body {
   font-weight: 600;
 }
 
-.preview-ratio {
-  font-size: 0.9rem;
+.preview-sub {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 400;
   color: var(--text-secondary);
+  margin-left: 8px;
 }
 
 .preview-dimensions {
   font-size: 0.85rem;
   color: #888;
+}
+
+.preview-ratio-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0 10px;
+}
+
+.preview-ratio-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.preview-ratio-label {
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding-right: 4px;
+}
+
+.preview-ratio-chip {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.preview-ratio-chip.active {
+  border-color: var(--brand-orange);
+  background: #fff4ec;
+  color: var(--brand-orange);
 }
 
 .download-btn {

@@ -8,6 +8,7 @@ const INITIAL_STATE = {
   background: 'brand',
   overlayCategory: 'none',
   logoType: 'logoOnly',
+  logoColor: 'white',
   overlayGrayscale: false,
   logoImage: null,
   customOverlayImage: null,
@@ -32,7 +33,7 @@ export default function App() {
     <ConfigProvider>
       <div className="app">
         <OptionPanel state={state} onUpdate={updateState} onReset={reset} />
-        <PreviewCanvas state={state} />
+        <PreviewCanvas state={state} onUpdate={updateState} />
       </div>
     </ConfigProvider>
   )
