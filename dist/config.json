@@ -1,23 +1,27 @@
 {
   "logos": {
     "logoOnly": {
-      "light": "/assets/logo/AIVEX-black.svg",
-      "dark": "/assets/logo/AIVEX-white.svg"
+      "white": "/assets/logo/AIVEX-white.svg",
+      "orange": "/assets/logo/AIVEX-orange.svg",
+      "black": "/assets/logo/AIVEX-black.svg"
     },
     "logoHorizontal": {
-      "light": "/assets/logo/AIVEX-slogan-black.svg",
-      "dark": "/assets/logo/AIVEX-slogan-white.svg"
+      "white": "/assets/logo/AIVEX-slogan-white.svg",
+      "orange": "/assets/logo/AIVEX-slogan-orange.svg",
+      "black": "/assets/logo/AIVEX-slogan-black.svg"
     },
     "logoVertical": {
-      "light": "/assets/logo/AIVEX-slogan-black-vertical.svg",
-      "dark": "/assets/logo/AIVEX-slogan-white-vertical.svg"
+      "white": "/assets/logo/AIVEX-slogan-white-vertical.svg",
+      "orange": "/assets/logo/AIVEX-slogan-orange-vertical.svg",
+      "black": "/assets/logo/AIVEX-slogan-black-vertical.svg"
     }
   },
   "colors": {
     "brand": "#FF5900",
     "white": "#FFFFFF",
     "darkgray": "#323339",
-    "black": "#000000"
+    "black": "#000000",
+    "lightgray": "#FAFAFC"
   },
   "ratios": [
     { "id": "1:1", "label": "1:1", "width": 1200, "height": 1200 },
@@ -33,6 +37,7 @@
     { "id": "white", "label": "흰색", "type": "color", "colorKey": "white" },
     { "id": "darkgray", "label": "어두운", "sub": "회색", "type": "color", "colorKey": "darkgray" },
     { "id": "black", "label": "검정", "sub": "블랙", "type": "color", "colorKey": "black" },
+    { "id": "lightgray", "label": "밝은(회색)", "type": "color", "colorKey": "lightgray" },
     { "id": "abstract01", "label": "추상 1", "type": "image", "src": "/assets/overlays/BG-abstract01.png" },
     { "id": "abstract02", "label": "추상 2", "type": "image", "src": "/assets/overlays/BG-abstract02.png" }
   ],
@@ -40,6 +45,11 @@
     { "id": "logoOnly", "label": "로고만" },
     { "id": "logoHorizontal", "label": "로고 + 슬로건 가로형", "hint": "가로로 슬로건이 배치됩니다" },
     { "id": "logoVertical", "label": "로고 + 슬로건 세로형", "hint": "슬로건이 로고 아래 배치됩니다" }
+  ],
+  "logoColors": [
+    { "id": "white", "label": "로고 흰색" },
+    { "id": "orange", "label": "로고 AIVEX 오렌지" },
+    { "id": "black", "label": "로고 검정색" }
   ],
   "overlays": [
     { "id": "none", "label": "없음" },
