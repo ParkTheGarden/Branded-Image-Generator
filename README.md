@@ -66,3 +66,4 @@ npm run build
 - **오버레이**: `config.json`의 `overlays`에 정의된 `src` 경로에 이미지 배치 (현재 기본: `public/assets/overlays/BG-*.png`)
 
 디자인: [Figma BIG-DEMO](https://sonata-savor-12715725.figma.site)
+# Branded-Image-Generator
