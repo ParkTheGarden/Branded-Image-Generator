@@ -10,6 +10,7 @@ const INITIAL_STATE = {
   logoType: 'logoOnly',
   logoColor: 'white',
   overlayGrayscale: false,
+  overlayOpacity: 20,
 }
 
 export default function App() {

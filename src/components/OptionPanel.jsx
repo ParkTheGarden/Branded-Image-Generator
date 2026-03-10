@@ -49,7 +49,25 @@ export default function OptionPanel({ state, onUpdate, onReset }) {
       {/* 03 사진 오버레이 */}
       <section className="option-section">
         <h2 className="option-label">사진 오버레이</h2>
-        <p className="option-desc">선택 시 사진이 20% 투명도로 배경에 깔립니다</p>
+        <p className="option-desc">선택한 이미지를 배경 위에 덧씌웁니다</p>
+
+        {!isAbstractBackground && state.overlayCategory !== 'none' && (
+          <div className="overlay-opacity-row">
+            <label className="overlay-opacity-label" htmlFor="overlay-opacity">
+              투명도 <span className="overlay-opacity-value">{state.overlayOpacity ?? 20}%</span>
+            </label>
+            <input
+              id="overlay-opacity"
+              type="range"
+              className="overlay-opacity-slider"
+              min={0}
+              max={100}
+              step={5}
+              value={state.overlayOpacity ?? 20}
+              onChange={(e) => onUpdate({ overlayOpacity: Number(e.target.value) })}
+            />
+          </div>
+        )}
 
         <button
           type="button"
@@ -113,6 +131,7 @@ export default function OptionPanel({ state, onUpdate, onReset }) {
         <p className="option-desc">
           로고의 가시성을 위해 배경 컬러에 따라 일부 옵션이 제한될 수 있습니다.
         </p>
+        {state.logoType !== 'none' && (
         <div className="logo-color-options">
           {logoColors.map((c) => {
             const bgId = state.background
@@ -143,6 +162,7 @@ export default function OptionPanel({ state, onUpdate, onReset }) {
             )
           })}
         </div>
+        )}
         <div className="logo-style-options">
           {logoTypes.map((opt) => (
             <button

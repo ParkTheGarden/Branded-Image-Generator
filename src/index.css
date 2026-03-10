@@ -196,6 +196,53 @@ body {
 }
 
 /* 03 오버레이 */
+.overlay-opacity-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.overlay-opacity-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.overlay-opacity-value {
+  font-weight: 600;
+  color: var(--brand-orange);
+}
+
+.overlay-opacity-slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.overlay-opacity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--brand-orange);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.overlay-opacity-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: none;
+  background: var(--brand-orange);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
 .overlay-options {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

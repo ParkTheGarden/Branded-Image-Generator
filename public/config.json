@@ -42,6 +42,7 @@
     { "id": "abstract02", "label": "추상 2", "type": "image", "src": "/assets/overlays/BG-abstract02.png" }
   ],
   "logoTypes": [
+    { "id": "none", "label": "로고 없음" },
     { "id": "logoOnly", "label": "로고만" },
     { "id": "logoHorizontal", "label": "로고 + 슬로건 가로형", "hint": "가로로 슬로건이 배치됩니다" },
     { "id": "logoVertical", "label": "로고 + 슬로건 세로형", "hint": "슬로건이 로고 아래 배치됩니다" }

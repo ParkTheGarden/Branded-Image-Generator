@@ -75,6 +75,8 @@ function getDefaultLogoSrc(logoType, background, config, logoColor) {
 }
 
 export function drawLogoLayer(ctx, w, h, state, config, defaultLogoImages = {}) {
+  if (state.logoType === 'none') return
+
   const logoColor = getLogoColor(state.background, config)
   const { logoType, logoColor: logoColorId } = state
   const logoSrc = getDefaultLogoSrc(logoType, state.background, config, logoColorId)
@@ -169,8 +171,9 @@ export function renderToCanvas(bufferCanvas, state, overlayImages, options = {})
       : null
 
   if (overlayImg && overlayImg.complete && overlayImg.naturalWidth) {
+    const opacity = Math.min(1, Math.max(0, (state.overlayOpacity ?? 20) / 100))
     ctx.save()
-    ctx.globalAlpha = 0.2
+    ctx.globalAlpha = opacity
     if (state.overlayGrayscale) {
       ctx.filter = 'saturate(0%)'
     }
