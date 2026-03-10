@@ -1,4 +1,6 @@
-export const DEFAULT_CONFIG = {
+import { normalizeConfigPaths } from '../utils/assetPaths'
+
+export const DEFAULT_CONFIG = normalizeConfigPaths({
   logos: {
     logoOnly: {
       white: '/assets/logo/AIVEX-white.svg',
@@ -65,4 +67,4 @@ export const DEFAULT_CONFIG = {
     { id: 'people02', label: 'AIVers 2', src: '/assets/overlays/BG-people02.png' },
     { id: 'minsoo', label: '민수님', src: '/assets/overlays/BG-minsoo.png' },
   ],
-}
+})

@@ -172,12 +172,11 @@ body {
   background: #fafafc;
 }
 
-.bg-swatch.abstract01 {
-  background: url('/assets/overlays/BG-abstract01.png') center/cover no-repeat;
-}
-
+.bg-swatch.abstract01,
 .bg-swatch.abstract02 {
-  background: url('/assets/overlays/BG-abstract02.png') center/cover no-repeat;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .bg-label {

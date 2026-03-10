@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:github-pages": "vite build --base=/Branded-Image-Generator/",
     "preview": "vite preview"
   },
   "dependencies": {

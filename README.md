@@ -116,3 +116,35 @@ Aivex Branded Image Generator/
 │  ├─ main.jsx                     # React 엔트리
 │  └─ App.jsx                      # 전체 레이아웃 및 상태 관리
 └─ vite.config.js
+
+---
+
+## 배포
+
+### Vercel
+
+이 프로젝트는 별도 서버가 없는 Vite 정적 앱이라 Vercel에 바로 배포할 수 있습니다.
+
+1. GitHub 저장소를 Vercel에 import
+2. Framework Preset: `Vite`
+3. Build Command: `npm run build`
+4. Output Directory: `dist`
+5. Deploy
+
+Vercel에서는 별도 설정 파일 없이 루트 경로(`/`) 기준으로 정상 동작합니다.
+
+### GitHub Pages
+
+GitHub Pages는 저장소명 하위 경로(`/Branded-Image-Generator/`)로 서비스되므로 전용 빌드를 사용해야 합니다.
+
+- 로컬 빌드: `npm run build:github-pages`
+- 출력 폴더: `dist`
+- 자동 배포: `.github/workflows/deploy-pages.yml`
+
+GitHub에서 아래 설정도 한 번 해줘야 합니다.
+
+1. 저장소 `Settings`
+2. `Pages`
+3. `Build and deployment`의 Source를 `GitHub Actions`로 변경
+
+그 뒤 `main` 브랜치에 push 하면 Pages가 자동 배포됩니다.

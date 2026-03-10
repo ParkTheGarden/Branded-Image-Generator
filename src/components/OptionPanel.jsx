@@ -35,6 +35,7 @@ export default function OptionPanel({ state, onUpdate, onReset }) {
             >
               <span
                 className={`bg-swatch ${bg.id}`}
+                style={bg.type === 'image' && bg.src ? { backgroundImage: `url("${bg.src}")` } : undefined}
               />
               <span className="bg-label">
                 {bg.label}
@@ -82,7 +83,12 @@ export default function OptionPanel({ state, onUpdate, onReset }) {
               title={cat.label}
             >
               {cat.src ? (
-                <img className="overlay-img" src={cat.src} alt={cat.label} onError={(e) => (e.target.style.display = 'none')} />
+                <img
+                  className="overlay-img"
+                  src={cat.src}
+                  alt={cat.label}
+                  onError={(e) => (e.target.style.display = 'none')}
+                />
               ) : (
                 <div className="overlay-empty" aria-hidden="true" />
               )}

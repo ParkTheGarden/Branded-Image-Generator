@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { DEFAULT_CONFIG } from '../config/defaultConfig'
+import { normalizeConfigPaths, withBasePath } from '../utils/assetPaths'
 
 const ConfigContext = createContext(null)
 
@@ -7,9 +8,9 @@ export function ConfigProvider({ children }) {
   const [config, setConfig] = useState(DEFAULT_CONFIG)
 
   useEffect(() => {
-    fetch('/config.json')
+    fetch(withBasePath('config.json'))
       .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data) => setConfig((prev) => ({ ...prev, ...data })))
+      .then((data) => setConfig((prev) => normalizeConfigPaths({ ...prev, ...data })))
       .catch(() => {})
   }, [])
 
