@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { useConfig } from '../context/ConfigContext'
 
 export default function OptionPanel({ state, onUpdate, onReset }) {
@@ -6,9 +7,18 @@ export default function OptionPanel({ state, onUpdate, onReset }) {
   const backgrounds = config.backgrounds || []
   const logoTypes = config.logoTypes || []
   const logoColors = config.logoColors || []
+  const overlayInputRef = useRef(null)
   const isAbstractBackground = backgrounds.some(
     (b) => b.id === state.background && b.type === 'image'
   )
+
+  const handleOverlayUpload = (e) => {
+    const file = e.target.files?.[0]
+    if (!file || !file.type.startsWith('image/')) return
+    const url = URL.createObjectURL(file)
+    onUpdate({ overlayCategory: 'custom', customOverlayImage: url })
+    e.target.value = ''
+  }
 
   return (
     <aside className="sidebar">
@@ -114,6 +124,27 @@ export default function OptionPanel({ state, onUpdate, onReset }) {
               <div className="overlay-title">{cat.label}</div>
             </button>
           ))}
+          {!isAbstractBackground && (
+            <>
+              <input
+                ref={overlayInputRef}
+                type="file"
+                accept="image/*"
+                className="overlay-upload-input"
+                aria-hidden
+                onChange={handleOverlayUpload}
+              />
+              <button
+                type="button"
+                className={`overlay-thumb overlay-upload ${state.overlayCategory === 'custom' ? 'active' : ''}`}
+                onClick={() => overlayInputRef.current?.click()}
+                title="사진 업로드"
+              >
+                <span className="overlay-upload-icon" aria-hidden="true">+</span>
+                <div className="overlay-title">업로드</div>
+              </button>
+            </>
+          )}
         </div>
         {isAbstractBackground ? (
           <p className="option-hint">추상 배경 선택 시 이미지를 오버레이할 수 없어요.</p>

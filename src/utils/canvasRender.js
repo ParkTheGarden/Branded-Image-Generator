@@ -138,6 +138,49 @@ function drawImageCoverByWidth(ctx, img, canvasW, canvasH) {
   ctx.drawImage(img, dx, dy, dw, dh)
 }
 
+function drawImageCoverByWidthGrayscale(ctx, img, canvasW, canvasH) {
+  // Prefer native canvas filter when available.
+  if (typeof ctx.filter === 'string') {
+    const prev = ctx.filter
+    ctx.filter = 'grayscale(1) saturate(0)'
+    drawImageCoverByWidth(ctx, img, canvasW, canvasH)
+    ctx.filter = prev
+    return
+  }
+
+  // Fallback: draw to offscreen, desaturate pixels, then draw back.
+  const off = document.createElement('canvas')
+  off.width = canvasW
+  off.height = canvasH
+  const octx = off.getContext('2d')
+  if (!octx) {
+    drawImageCoverByWidth(ctx, img, canvasW, canvasH)
+    return
+  }
+
+  drawImageCoverByWidth(octx, img, canvasW, canvasH)
+  try {
+    const imageData = octx.getImageData(0, 0, canvasW, canvasH)
+    const d = imageData.data
+    for (let i = 0; i < d.length; i += 4) {
+      const r = d[i]
+      const g = d[i + 1]
+      const b = d[i + 2]
+      const gray = Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b)
+      d[i] = gray
+      d[i + 1] = gray
+      d[i + 2] = gray
+    }
+    octx.putImageData(imageData, 0, 0)
+  } catch (_) {
+    // If getImageData is blocked, fall back to normal draw.
+    drawImageCoverByWidth(ctx, img, canvasW, canvasH)
+    return
+  }
+
+  ctx.drawImage(off, 0, 0)
+}
+
 export function renderToCanvas(bufferCanvas, state, overlayImages, options = {}) {
   const { forDownload = false, config = {}, defaultLogoImages = {}, backgroundImages = {} } = options
   const { w, h } = getDimensionsFromConfig(config, state.ratio)
@@ -165,21 +208,74 @@ export function renderToCanvas(bufferCanvas, state, overlayImages, options = {})
   }
 
   const isAbstractBackground = state.background === 'abstract01' || state.background === 'abstract02'
-  const overlayImg =
+  let overlayImg =
     !isAbstractBackground && state.overlayCategory !== 'none' && state.overlayCategory !== 'custom'
       ? overlayImages[state.overlayCategory]
       : null
+  if (state.overlayCategory === 'custom' && options.customOverlayImage) {
+    overlayImg = options.customOverlayImage
+  }
 
-  if (overlayImg && overlayImg.complete && overlayImg.naturalWidth) {
+  if (overlayImg && (overlayImg.complete !== false) && (overlayImg.naturalWidth ?? overlayImg.width)) {
     const opacity = Math.min(1, Math.max(0, (state.overlayOpacity ?? 20) / 100))
     ctx.save()
     ctx.globalAlpha = opacity
     if (state.overlayGrayscale) {
-      ctx.filter = 'saturate(0%)'
+      drawImageCoverByWidthGrayscale(ctx, overlayImg, w, h)
+    } else {
+      drawImageCoverByWidth(ctx, overlayImg, w, h)
     }
-    drawImageCoverByWidth(ctx, overlayImg, w, h)
     ctx.restore()
   }
 
   drawLogoLayer(ctx, w, h, state, config, options.defaultLogoImages)
+
+  /* 텍스트 레이어는 다운로드 시에만 캔버스에 그리기 (미리보기는 HTML 오버레이로 표시) */
+  if (forDownload) {
+    const texts = state.texts || []
+    const typography = options.typography || config.typography
+    if (texts.length && typography) {
+      drawTextLayer(ctx, w, h, texts, typography)
+    }
+  }
+}
+
+function drawTextLayer(ctx, w, h, texts, typography) {
+  const fontFamily = typography.fontFamily || 'Pretendard Variable, sans-serif'
+  const sizes = typography.textSizes || []
+  const weights = typography.textWeights || []
+  const colors = typography.textColors || []
+  const lineHeightRatio = typography.lineHeightRatio ?? 1.4
+  const letterSpacingEm = parseFloat(String(typography.letterSpacing || '').replace('em', '')) || -0.01
+  const getSize = (id) => sizes.find((s) => s.id === id)?.value ?? 18
+  const getWeight = (id) => weights.find((w) => w.id === id)?.value ?? 400
+  const getColor = (id) => colors.find((c) => c.id === id)?.value ?? '#000000'
+  const scale = Math.min(w, h) / 540
+
+  texts.forEach((t) => {
+    const px = t.x * w
+    const py = t.y * h
+    const size = getSize(t.fontSizeId)
+    const weight = getWeight(t.fontWeightId)
+    const color = getColor(t.colorId)
+    const fontSize = Math.max(12, Math.round(size * scale))
+    const lineHeight = fontSize * lineHeightRatio
+    const letterSpacingPx = fontSize * letterSpacingEm
+    const lines = (t.content || '').split('\n')
+
+    ctx.save()
+    ctx.font = `${weight} ${fontSize}px ${fontFamily}`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillStyle = color
+    if (ctx.letterSpacing !== undefined) {
+      ctx.letterSpacing = `${letterSpacingPx}px`
+    }
+    const totalHeight = lines.length * lineHeight
+    lines.forEach((line, i) => {
+      const lineY = py - totalHeight / 2 + (i + 0.5) * lineHeight
+      ctx.fillText(line, px, lineY)
+    })
+    ctx.restore()
+  })
 }

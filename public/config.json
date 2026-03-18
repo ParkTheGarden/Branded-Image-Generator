@@ -52,6 +52,27 @@
     { "id": "orange", "label": "로고 AIVEX 오렌지" },
     { "id": "black", "label": "로고 검정색" }
   ],
+  "typography": {
+    "fontFamily": "Pretendard Variable, Pretendard, sans-serif",
+    "lineHeightRatio": 1.4,
+    "letterSpacing": "-0.01em",
+    "textSizes": [
+      { "id": "s", "label": "S", "value": 14 },
+      { "id": "m", "label": "M", "value": 18 },
+      { "id": "l", "label": "L", "value": 24 }
+    ],
+    "textWeights": [
+      { "id": "400", "label": "Regular", "value": 400 },
+      { "id": "700", "label": "Bold", "value": 700 }
+    ],
+    "textColors": [
+      { "id": "white", "label": "흰색", "value": "#FFFFFF" },
+      { "id": "lightgray", "label": "밝은 회색", "value": "#FAFAFC" },
+      { "id": "orange", "label": "오렌지", "value": "#FF5900" },
+      { "id": "darkgray", "label": "짙은 회색", "value": "#323339" },
+      { "id": "black", "label": "검정", "value": "#000000" }
+    ]
+  },
   "overlays": [
     { "id": "none", "label": "없음" },
     { "id": "line", "label": "라인", "src": "/assets/overlays/BG-line.png" },
@@ -59,7 +80,6 @@
     { "id": "lobby", "label": "3층 로비", "src": "/assets/overlays/BG-lobby.png" },
     { "id": "factory01", "label": "현장 1", "src": "/assets/overlays/BG-factory01.png" },
     { "id": "factory02", "label": "현장 2", "src": "/assets/overlays/BG-factory02.png" },
-    { "id": "factory03", "label": "현장 3", "src": "/assets/overlays/BG-factory03.png" },
     { "id": "labeling01", "label": "레이블링 1", "src": "/assets/overlays/BG-labeling01.png" },
     { "id": "labeling02", "label": "레이블링 2", "src": "/assets/overlays/BG-labeling02.png" },
     { "id": "people01", "label": "AIVers 1", "src": "/assets/overlays/BG-people01.png" },
