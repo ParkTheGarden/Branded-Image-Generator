@@ -14,7 +14,6 @@
 | `lobby`     | `BG-lobby.png`        | 3층 로비       | 3층 로비 사진       |
 | `factory01` | `BG-factory01.png`    | 현장 1         | 제조 현장 사진 1    |
 | `factory02` | `BG-factory02.png`    | 현장 2         | 제조 현장 사진 2    |
-| `factory03` | `BG-factory03.png`    | 현장 3         | 제조 현장 사진 3    |
 | `labeling01`| `BG-labeling01.png`   | 레이블링 1     | 레이블링 작업 1     |
 | `labeling02`| `BG-labeling02.png`   | 레이블링 2     | 레이블링 작업 2     |
 | `people01`  | `BG-people01.png`     | AIVers 1       | AIVEX 인물 사진 1   |

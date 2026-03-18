@@ -20,25 +20,27 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
   background: var(--bg-page);
   color: var(--text-primary);
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .app {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* ========== 사이드바 ========== */
 .sidebar {
-  width: 460px;
+  width: 420px;
   min-width: 420px;
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border);
-  padding: 28px;
-  overflow-y: auto;
+  padding: 20px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 18px;
 }
 
 .sidebar-header {
@@ -61,7 +63,7 @@ body {
 .option-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .option-label {
@@ -85,12 +87,12 @@ body {
 
 /* 옵션 버튼 공통 */
 .option-btn {
-  padding: 10px 14px;
+  padding: 8px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--bg-card);
   color: var(--text-primary);
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
   text-align: left;
@@ -265,7 +267,7 @@ body {
 
 .overlay-thumb {
   width: 100%;
-  height: 96px;
+  height: 68px;
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0;
@@ -340,14 +342,27 @@ body {
   text-shadow: none;
 }
 
-.overlay-upload .upload-icon {
-  font-size: 1.25rem;
-  font-weight: 600;
+.overlay-upload-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.overlay-upload .overlay-upload-icon {
+  font-size: 1.5rem;
+  font-weight: 300;
   color: var(--text-secondary);
+  line-height: 1;
 }
 
 .overlay-upload {
   background: var(--bg-card);
+}
+
+.overlay-upload .overlay-title {
+  color: var(--text-secondary);
 }
 
 .overlay-upload-inner {
@@ -394,7 +409,7 @@ body {
 
 .overlay-toggle-container {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--bg-card);
@@ -404,7 +419,7 @@ body {
   gap: 10px;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .overlay-toggle-container.on {
@@ -478,6 +493,133 @@ body {
   cursor: default;
 }
 
+/* 05 텍스트 */
+.text-add-row {
+  display: flex;
+  gap: 8px;
+}
+
+.text-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: inherit;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: var(--brand-orange);
+}
+
+.text-add-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--brand-orange);
+  border-radius: 8px;
+  background: var(--brand-orange);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.text-add-btn:hover {
+  background: var(--brand-orange-hover);
+  border-color: var(--brand-orange-hover);
+}
+
+.keynote-segment-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.keynote-segment-label {
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  min-width: 36px;
+}
+
+.keynote-segment-group {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-card);
+}
+
+.keynote-segment-btn {
+  padding: 6px 12px;
+  border: none;
+  border-right: 1px solid var(--border);
+  background: transparent;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.keynote-segment-btn:last-child {
+  border-right: none;
+}
+
+.keynote-segment-btn:hover {
+  background: #f0f0f0;
+  color: var(--text-primary);
+}
+
+.keynote-segment-btn.active {
+  background: var(--brand-orange);
+  color: #fff;
+}
+
+.text-color-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.text-color-row .keynote-segment-label {
+  padding-top: 6px;
+}
+
+.text-color-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.text-color-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.text-color-chip::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--chip-color, #999);
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.text-color-chip.active {
+  border-color: var(--brand-orange);
+  box-shadow: 0 0 0 1px var(--brand-orange);
+}
+
 /* 초기화 버튼 */
 .reset-btn {
   margin-top: auto;
@@ -503,7 +645,7 @@ body {
 /* ========== 미리보기 영역 ========== */
 .preview-area {
   flex: 1;
-  padding: 24px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -513,8 +655,25 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  flex-wrap: nowrap;
 }
+
+.preview-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: 0;
+}
+
+.preview-header-ratio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
 
 .preview-info {
   display: flex;
@@ -540,20 +699,12 @@ body {
   color: #888;
 }
 
-.preview-ratio-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 4px 0 10px;
-}
-
-.preview-ratio-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
+.preview-ratio-bar,
+.preview-ratio-left,
+.preview-bottom-bar,
+.preview-bottom-left,
+.preview-bottom-right {
+  display: none;
 }
 
 .preview-ratio-label {
@@ -582,13 +733,53 @@ body {
   color: var(--brand-orange);
 }
 
+/* 텍스트 섹션 */
+.preview-text-section {
+  padding: 12px 0 16px;
+  border-top: 1px solid var(--border);
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.preview-text-section-bottom {
+  margin-bottom: 8px;
+}
+
+.preview-text-section-label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.preview-text-options-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.preview-text-options-row .keynote-segment-row,
+.preview-text-options-row .text-color-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-text-options-row .text-color-row .keynote-segment-label {
+  padding-top: 0;
+}
+
 .download-btn {
-  padding: 12px 24px;
+  padding: 10px 18px;
   border: none;
   border-radius: 999px;
   background: var(--brand-orange);
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
@@ -607,11 +798,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 400px;
+  min-height: 0;
   background: repeating-conic-gradient(#ddd 0% 25%, #eee 0% 50%) 50% / 20px 20px;
   border-radius: 12px;
-  padding: 24px;
+  padding: 16px;
   position: relative;
+}
+
+.preview-canvas-layer {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  overflow: hidden;
 }
 
 .preview-canvas {
@@ -621,4 +819,77 @@ body {
   height: auto;
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+.preview-text-overlay {
+  pointer-events: none;
+}
+
+.preview-text-overlay .preview-text-item {
+  pointer-events: auto;
+}
+
+.preview-text-item {
+  outline: none;
+  padding: 2px 4px;
+  border-radius: 4px;
+  min-width: 20px;
+  min-height: 1em;
+  border: 1px solid transparent;
+}
+
+.preview-text-item.selected {
+  border: 1px solid var(--brand-orange);
+  box-shadow: none;
+}
+
+.preview-text-item.editing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.preview-text-item.editing .preview-text-edit {
+  font: inherit;
+  resize: none;
+  min-width: 60px;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.95);
+  white-space: pre;
+}
+
+.text-item-delete-small {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  color: #333;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.text-item-delete-small:hover {
+  background: #f8f8f8;
+  color: #c00;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.text-item-delete-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.preview-text-content {
+  display: inline-block;
 }
