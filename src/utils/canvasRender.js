@@ -16,40 +16,6 @@ export function getLogoColor(background, config) {
   return darkText
 }
 
-export function drawPlaceholderLogo(ctx, w, h, logoColor) {
-  const centerX = w / 2
-  const centerY = h / 2
-  const hexR = Math.min(w, h) * 0.08
-  const hexCenterY = centerY - hexR * 0.3
-
-  ctx.save()
-  ctx.fillStyle = logoColor
-  ctx.strokeStyle = logoColor
-  ctx.lineWidth = 2
-
-  const hexPoints = []
-  for (let i = 0; i < 6; i++) {
-    const angle = (Math.PI / 3) * i - Math.PI / 6
-    hexPoints.push([
-      centerX - hexR * 1.2 + hexR * Math.cos(angle),
-      hexCenterY + hexR * Math.sin(angle),
-    ])
-  }
-  ctx.beginPath()
-  hexPoints.forEach((p, i) => (i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1])))
-  ctx.closePath()
-  ctx.stroke()
-
-  ctx.font = `bold ${hexR * 1.4}px sans-serif`
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.fillText('N', centerX - hexR * 1.2, hexCenterY)
-
-  ctx.font = `bold ${Math.min(w, h) * 0.055}px sans-serif`
-  ctx.fillText('NEXUS AI', centerX + hexR * 0.5, centerY)
-  ctx.restore()
-}
-
 function getDimensionsFromConfig(config, ratioId) {
   const list = config?.ratios || []
   const found = list.find((r) => r.id === ratioId) || list[0]
@@ -107,9 +73,6 @@ export function drawLogoLayer(ctx, w, h, state, config, defaultLogoImages = {}) 
     ctx.save()
     ctx.drawImage(logoToDraw, lx, ly, lw, lh)
     ctx.restore()
-
-  } else {
-    drawPlaceholderLogo(ctx, w, h, logoColor)
   }
 }
 
