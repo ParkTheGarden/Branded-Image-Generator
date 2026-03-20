@@ -67,8 +67,17 @@ export function drawLogoLayer(ctx, w, h, state, config, defaultLogoImages = {}) 
     const scale = Math.min(maxLogoW / lw, maxLogoH / lh, 1)
     lw *= scale
     lh *= scale
-    const lx = (w - lw) / 2
-    const ly = (h - lh) / 2
+    const userScale = typeof state.logoScale === 'number' ? state.logoScale : 1
+    const safeLogoScale = Math.max(0.1, Math.min(5, userScale))
+    lw *= safeLogoScale
+    lh *= safeLogoScale
+
+    const posX = typeof state.logoPosX === 'number' ? state.logoPosX : 0.5
+    const posY = typeof state.logoPosY === 'number' ? state.logoPosY : 0.5
+    const safePosX = Math.max(0, Math.min(1, posX))
+    const safePosY = Math.max(0, Math.min(1, posY))
+    const lx = w * safePosX - lw / 2
+    const ly = h * safePosY - lh / 2
 
     ctx.save()
     ctx.drawImage(logoToDraw, lx, ly, lw, lh)
@@ -145,15 +154,37 @@ function drawImageCoverByWidthGrayscale(ctx, img, canvasW, canvasH) {
 }
 
 export function renderToCanvas(bufferCanvas, state, overlayImages, options = {}) {
-  const { forDownload = false, config = {}, defaultLogoImages = {}, backgroundImages = {} } = options
-  const { w, h } = getDimensionsFromConfig(config, state.ratio)
+  const { forDownload = false, config = {}, defaultLogoImages = {}, backgroundImages = {}, dimensions = null } = options
+  const base = dimensions?.width && dimensions?.height ? { w: dimensions.width, h: dimensions.height } : getDimensionsFromConfig(config, state.ratio)
+  const { w, h } = base // logical coordinate space
   const ctx = bufferCanvas.getContext('2d')
-  bufferCanvas.width = w
-  bufferCanvas.height = h
+
+  // bufferCanvas.width/height are the actual pixel resolution we want to draw into.
+  // When those differ from logical w/h (e.g. zoom preview), we map the logical
+  // coordinate space to the actual buffer using ctx.scale().
+  const actualW = bufferCanvas.width || w
+  const actualH = bufferCanvas.height || h
+
+  // Ensure we have a valid buffer.
+  if (!bufferCanvas.width || !bufferCanvas.height) {
+    bufferCanvas.width = w
+    bufferCanvas.height = h
+  }
+
+  // Reset transform so we don't accumulate scaling.
+  ctx.setTransform(1, 0, 0, 1, 0, 0)
+
+  // For transparent backgrounds (download), clear the full actual buffer first.
+  if (state.background === 'transparent' && forDownload) {
+    ctx.clearRect(0, 0, actualW, actualH)
+  }
+
+  ctx.save()
+  ctx.scale(actualW / w, actualH / h)
 
   if (state.background === 'transparent') {
     if (forDownload) {
-      ctx.clearRect(0, 0, w, h)
+      // Already cleared in actual pixel space.
     } else {
       drawCheckerboard(ctx, 0, 0, w, h)
     }
@@ -201,6 +232,8 @@ export function renderToCanvas(bufferCanvas, state, overlayImages, options = {})
       drawTextLayer(ctx, w, h, texts, typography)
     }
   }
+
+  ctx.restore()
 }
 
 function drawTextLayer(ctx, w, h, texts, typography) {
@@ -221,6 +254,7 @@ function drawTextLayer(ctx, w, h, texts, typography) {
     const size = getSize(t.fontSizeId)
     const weight = getWeight(t.fontWeightId)
     const color = getColor(t.colorId)
+    const align = t.textAlign || 'center'
     const fontSize = Math.max(12, Math.round(size * scale))
     const lineHeight = fontSize * lineHeightRatio
     const letterSpacingPx = fontSize * letterSpacingEm
@@ -228,16 +262,30 @@ function drawTextLayer(ctx, w, h, texts, typography) {
 
     ctx.save()
     ctx.font = `${weight} ${fontSize}px ${fontFamily}`
-    ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillStyle = color
+    // We'll compute per-line X based on alignment while keeping the overall block centered at (px, py).
+    ctx.textAlign = 'left'
     if (ctx.letterSpacing !== undefined) {
       ctx.letterSpacing = `${letterSpacingPx}px`
     }
+
+    const lineWidths = lines.map((line) => ctx.measureText(line).width || 0)
+    const maxWidth = Math.max(0, ...lineWidths)
     const totalHeight = lines.length * lineHeight
     lines.forEach((line, i) => {
       const lineY = py - totalHeight / 2 + (i + 0.5) * lineHeight
-      ctx.fillText(line, px, lineY)
+      const lineWidth = lineWidths[i] || 0
+      let lineX = px
+      if (align === 'left') {
+        lineX = px - maxWidth / 2
+      } else if (align === 'right') {
+        lineX = px + maxWidth / 2 - lineWidth
+      } else {
+        // center
+        lineX = px - lineWidth / 2
+      }
+      ctx.fillText(line, lineX, lineY)
     })
     ctx.restore()
   })

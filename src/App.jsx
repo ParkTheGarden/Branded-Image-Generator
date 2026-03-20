@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { ConfigProvider } from './context/ConfigContext'
 import OptionPanel from './components/OptionPanel'
 import PreviewCanvas from './components/PreviewCanvas'
@@ -11,11 +11,17 @@ function generateId() {
 
 const INITIAL_STATE = {
   ratio: '16:9',
+  customRatioWidth: 1920,
+  customRatioHeight: 1080,
   background: 'brand',
   overlayCategory: 'none',
   customOverlayImage: null,
   logoType: 'logoOnly',
   logoColor: 'white',
+  logoPosX: 0.5,
+  logoPosY: 0.5,
+  logoScale: 1,
+  logoSelected: false,
   overlayGrayscale: false,
   overlayOpacity: 20,
   texts: [],
@@ -24,13 +30,68 @@ const INITIAL_STATE = {
   defaultTextSizeId: 'm',
   defaultTextWeightId: '400',
   defaultTextColorId: 'white',
+  defaultTextAlign: 'center',
+}
+
+function cloneState(obj) {
+  // State is plain JSON-safe data (strings/numbers/arrays), so JSON clone is enough.
+  return JSON.parse(JSON.stringify(obj))
 }
 
 export default function App() {
   const [state, setState] = useState(INITIAL_STATE)
+  const [historyInfo, setHistoryInfo] = useState({ pastCount: 0, futureCount: 0 })
+  const pastRef = useRef([])
+  const futureRef = useRef([])
+  const stateRef = useRef(state)
+  const isRestoringRef = useRef(false)
 
-  const updateState = useCallback((updates) => {
-    setState((prev) => ({ ...prev, ...updates }))
+  useEffect(() => {
+    stateRef.current = state
+  }, [state])
+
+  const pushHistorySnapshot = useCallback(() => {
+    const current = stateRef.current
+    pastRef.current.push(cloneState(current))
+    // Limit history to avoid uncontrolled memory growth.
+    if (pastRef.current.length > 60) pastRef.current.shift()
+    futureRef.current = []
+    setHistoryInfo({ pastCount: pastRef.current.length, futureCount: futureRef.current.length })
+  }, [])
+
+  const undo = useCallback(() => {
+    if (pastRef.current.length === 0) return
+    isRestoringRef.current = true
+    const previous = pastRef.current.pop()
+    futureRef.current.unshift(cloneState(stateRef.current))
+    setState(previous)
+    stateRef.current = previous
+    isRestoringRef.current = false
+    setHistoryInfo({ pastCount: pastRef.current.length, futureCount: futureRef.current.length })
+  }, [])
+
+  const redo = useCallback(() => {
+    if (futureRef.current.length === 0) return
+    isRestoringRef.current = true
+    const next = futureRef.current.shift()
+    pastRef.current.push(cloneState(stateRef.current))
+    setState(next)
+    stateRef.current = next
+    isRestoringRef.current = false
+    setHistoryInfo({ pastCount: pastRef.current.length, futureCount: futureRef.current.length })
+  }, [])
+
+  const updateState = useCallback((updates, options = {}) => {
+    const { history = true } = options
+    setState((prev) => {
+      if (history && !isRestoringRef.current) {
+        pastRef.current.push(cloneState(prev))
+        if (pastRef.current.length > 60) pastRef.current.shift()
+        futureRef.current = []
+        setHistoryInfo({ pastCount: pastRef.current.length, futureCount: futureRef.current.length })
+      }
+      return { ...prev, ...updates }
+    })
   }, [])
 
   const reset = useCallback(() => {
@@ -44,10 +105,13 @@ export default function App() {
         customOverlayImage: null,
       }
     })
+    // Reset should be undoable as a single step.
+    pushHistorySnapshot()
   }, [])
 
   const addText = useCallback((content) => {
     if (!content.trim()) return
+    pushHistorySnapshot()
     setState((prev) => ({
       ...prev,
       texts: [
@@ -60,6 +124,7 @@ export default function App() {
           fontSizeId: prev.defaultTextSizeId || 'm',
           fontWeightId: prev.defaultTextWeightId || '400',
           colorId: prev.defaultTextColorId || 'white',
+          textAlign: prev.defaultTextAlign || 'center',
         },
       ],
       selectedTextId: null,
@@ -68,20 +133,23 @@ export default function App() {
   }, [])
 
   const updateText = useCallback((id, updates) => {
+    const history = arguments.length >= 3 ? arguments[2]?.history !== false : true
+    if (history && !isRestoringRef.current) pushHistorySnapshot()
     setState((prev) => ({
       ...prev,
       texts: prev.texts.map((t) => (t.id === id ? { ...t, ...updates } : t)),
     }))
-  }, [])
+  }, [pushHistorySnapshot])
 
   const removeText = useCallback((id) => {
+    pushHistorySnapshot()
     setState((prev) => ({
       ...prev,
       texts: prev.texts.filter((t) => t.id !== id),
       selectedTextId: prev.selectedTextId === id ? null : prev.selectedTextId,
       editingTextId: prev.editingTextId === id ? null : prev.editingTextId,
     }))
-  }, [])
+  }, [pushHistorySnapshot])
 
   useEffect(() => {
     trackPageViewOncePerSession({
@@ -129,6 +197,11 @@ export default function App() {
           onAddText={addText}
           onUpdateText={updateText}
           onRemoveText={removeText}
+          onUndo={undo}
+          onRedo={redo}
+          canUndo={historyInfo.pastCount > 0}
+          canRedo={historyInfo.futureCount > 0}
+          onPushHistorySnapshot={pushHistorySnapshot}
         />
       </div>
     </ConfigProvider>
