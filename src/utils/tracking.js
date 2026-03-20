@@ -34,8 +34,24 @@ function buildPayload(payload) {
   }
 }
 
+async function insertEvent(event) {
+  if (!supabase) {
+    // Env vars missing in build or local.
+    console.warn('[tracking] Supabase client is not initialized. Check VITE_SUPABASE_URL/ANON_KEY.')
+    return
+  }
+
+  try {
+    const { error } = await supabase.from('events').insert(event)
+    if (error) {
+      console.error('[tracking] Supabase insert failed:', error)
+    }
+  } catch (e) {
+    console.error('[tracking] Supabase insert exception:', e)
+  }
+}
+
 export function trackPageViewOncePerSession(payload) {
-  if (!supabase) return
   try {
     if (sessionStorage.getItem(PAGE_VIEW_SENT_KEY) === '1') return
     sessionStorage.setItem(PAGE_VIEW_SENT_KEY, '1')
@@ -44,7 +60,7 @@ export function trackPageViewOncePerSession(payload) {
   }
 
   const session_id = getOrCreateSessionId()
-  void supabase.from('events').insert({
+  void insertEvent({
     event_type: 'page_view',
     session_id,
     ...buildPayload(payload),
@@ -52,9 +68,8 @@ export function trackPageViewOncePerSession(payload) {
 }
 
 export function trackPngDownload(payload) {
-  if (!supabase) return
   const session_id = getOrCreateSessionId()
-  void supabase.from('events').insert({
+  void insertEvent({
     event_type: 'png_download',
     session_id,
     ...buildPayload(payload),
