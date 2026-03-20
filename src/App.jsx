@@ -3,6 +3,7 @@ import { ConfigProvider } from './context/ConfigContext'
 import OptionPanel from './components/OptionPanel'
 import PreviewCanvas from './components/PreviewCanvas'
 import { trackPageViewOncePerSession } from './utils/tracking'
+import { supabase } from './utils/supabaseClient'
 
 function generateId() {
   return `t_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
@@ -91,6 +92,32 @@ export default function App() {
       overlayGrayscale: state.overlayGrayscale,
     })
   }, [state.ratio, state.background, state.overlayCategory, state.overlayOpacity, state.overlayGrayscale])
+
+  // Next.js의 middleware(cookie refresh)와 유사하게, SPA에서는 브라우저에서 필요할 때 세션을 갱신합니다.
+  // 현재 앱은 anon 기반 이벤트 insert만 사용하므로 실질적으로는 no-op일 가능성이 높습니다.
+  useEffect(() => {
+    if (!supabase?.auth?.refreshSession) return
+
+    let cancelled = false
+    const refresh = async () => {
+      try {
+        const { data } = await supabase.auth.getSession()
+        if (cancelled) return
+        if (!data?.session) return
+        await supabase.auth.refreshSession()
+      } catch (e) {
+        // Tracking insert와 무관하게 세션 refresh는 실패해도 앱은 계속 동작해야 합니다.
+        console.warn('[supabase] session refresh failed', e)
+      }
+    }
+
+    void refresh()
+    const intervalId = window.setInterval(refresh, 60 * 60 * 1000) // 1 hour
+    return () => {
+      cancelled = true
+      window.clearInterval(intervalId)
+    }
+  }, [])
 
   return (
     <ConfigProvider>
