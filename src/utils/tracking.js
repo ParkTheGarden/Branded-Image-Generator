@@ -34,6 +34,29 @@ function buildPayload(payload) {
   }
 }
 
+async function insertEvent(event) {
+  if (!supabase) return
+
+  // Only log event type to avoid leaking any secrets.
+  try {
+    console.info('[tracking] insert event_type:', event?.event_type)
+    const { error } = await supabase.from('events').insert(event)
+    if (error) {
+      console.error('[tracking] insert failed:', {
+        event_type: event?.event_type,
+        message: error.message,
+      })
+    } else {
+      console.info('[tracking] insert ok:', event?.event_type)
+    }
+  } catch (e) {
+    console.error('[tracking] insert exception:', {
+      event_type: event?.event_type,
+      message: e?.message,
+    })
+  }
+}
+
 export function trackPageViewOncePerSession(payload) {
   if (!supabase) return
   try {
@@ -44,7 +67,7 @@ export function trackPageViewOncePerSession(payload) {
   }
 
   const session_id = getOrCreateSessionId()
-  void supabase.from('events').insert({
+  void insertEvent({
     event_type: 'page_view',
     session_id,
     ...buildPayload(payload),
@@ -54,7 +77,7 @@ export function trackPageViewOncePerSession(payload) {
 export function trackPngDownload(payload) {
   if (!supabase) return
   const session_id = getOrCreateSessionId()
-  void supabase.from('events').insert({
+  void insertEvent({
     event_type: 'png_download',
     session_id,
     ...buildPayload(payload),
