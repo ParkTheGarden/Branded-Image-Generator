@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { ConfigProvider } from './context/ConfigContext'
 import OptionPanel from './components/OptionPanel'
 import PreviewCanvas from './components/PreviewCanvas'
+import { trackPageViewOncePerSession } from './utils/tracking'
 
 function generateId() {
   return `t_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
@@ -80,6 +81,16 @@ export default function App() {
       editingTextId: prev.editingTextId === id ? null : prev.editingTextId,
     }))
   }, [])
+
+  useEffect(() => {
+    trackPageViewOncePerSession({
+      ratio: state.ratio,
+      background: state.background,
+      overlayCategory: state.overlayCategory,
+      overlayOpacity: state.overlayOpacity,
+      overlayGrayscale: state.overlayGrayscale,
+    })
+  }, [state.ratio, state.background, state.overlayCategory, state.overlayOpacity, state.overlayGrayscale])
 
   return (
     <ConfigProvider>

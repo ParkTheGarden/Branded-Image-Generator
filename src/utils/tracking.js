@@ -1,0 +1,63 @@
+import { supabase } from './supabaseClient'
+
+const SESSION_ID_KEY = 'aivex_session_id'
+const PAGE_VIEW_SENT_KEY = 'aivex_page_view_sent'
+
+function safeRandomId() {
+  try {
+    if (crypto?.randomUUID) return crypto.randomUUID()
+  } catch (_) {}
+  return `s_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+}
+
+export function getOrCreateSessionId() {
+  try {
+    const existing = sessionStorage.getItem(SESSION_ID_KEY)
+    if (existing) return existing
+    const created = safeRandomId()
+    sessionStorage.setItem(SESSION_ID_KEY, created)
+    return created
+  } catch (_) {
+    // If storage is blocked, tracking should still not crash the app.
+    return safeRandomId()
+  }
+}
+
+function buildPayload(payload) {
+  // Normalize keys to match the suggested DB schema.
+  return {
+    ratio: payload?.ratio,
+    background: payload?.background,
+    overlay_category: payload?.overlayCategory,
+    overlay_opacity: payload?.overlayOpacity,
+    overlay_grayscale: payload?.overlayGrayscale,
+  }
+}
+
+export function trackPageViewOncePerSession(payload) {
+  if (!supabase) return
+  try {
+    if (sessionStorage.getItem(PAGE_VIEW_SENT_KEY) === '1') return
+    sessionStorage.setItem(PAGE_VIEW_SENT_KEY, '1')
+  } catch (_) {
+    // If storage is blocked, fallback to sending once per session render.
+  }
+
+  const session_id = getOrCreateSessionId()
+  void supabase.from('events').insert({
+    event_type: 'page_view',
+    session_id,
+    ...buildPayload(payload),
+  })
+}
+
+export function trackPngDownload(payload) {
+  if (!supabase) return
+  const session_id = getOrCreateSessionId()
+  void supabase.from('events').insert({
+    event_type: 'png_download',
+    session_id,
+    ...buildPayload(payload),
+  })
+}
+

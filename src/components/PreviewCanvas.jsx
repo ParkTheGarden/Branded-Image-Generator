@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { useConfig } from '../context/ConfigContext'
 import { renderToCanvas } from '../utils/canvasRender'
+import { trackPngDownload } from '../utils/tracking'
 
 export default function PreviewCanvas({ state, onUpdate, onAddText, onUpdateText, onRemoveText }) {
   const config = useConfig()
@@ -149,6 +150,16 @@ export default function PreviewCanvas({ state, onUpdate, onAddText, onUpdateText
     const off = document.createElement('canvas')
     off.width = w
     off.height = h
+
+    // Track "button click" as a single event per download attempt.
+    trackPngDownload({
+      ratio: state.ratio,
+      background: state.background,
+      overlayCategory: state.overlayCategory,
+      overlayOpacity: state.overlayOpacity,
+      overlayGrayscale: state.overlayGrayscale,
+    })
+
     renderToCanvas(off, state, overlayImages, {
       forDownload: true,
       config,
